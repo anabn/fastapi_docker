@@ -3,6 +3,7 @@ version: '3.8'
 services:
   patient_service:
     build: ./patient-service
+    tty: true
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     container_name: patient_service
     volumes:
@@ -11,7 +12,7 @@ services:
       - 8001:8000
     environment:
       - DATABASE_URI=postgresql://patient_db_username:patient_db_password@patient_db/patient_db_dev
-      - DRUG_SERVICE_HOST_URL=http://drug_service:8000/api/v1/drugs
+      - DRUG_SERVICE_HOST_URL=http://drug_service:8000/api/v1/drugs/
     depends_on:
       - patient_db
 
@@ -27,6 +28,7 @@ services:
 
   drug_service:
     build: ./drugs-service
+    tty: true
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     container_name: drug_service
     volumes:
@@ -59,6 +61,7 @@ services:
       - NGINX_HOST=192.168.65.2
     volumes:
       - ./nginx_config.conf:/etc/nginx/conf.d/default.conf
+      - ./src/:/etc/nginx/html
 
 volumes:
   postgres_data_patient:
